@@ -1,0 +1,68 @@
+// Select DOM elements
+const userInput = document.getElementById("user-input");
+const sendButton = document.getElementById("send-button");
+const chatMessages = document.getElementById("chat-messages");
+
+// Chatbot responses
+const responses = [
+    {
+        keywords: ["stress", "anxious", "overwhelmed"],
+        response: "It sounds like you're feeling stressed. Try taking deep breaths or a short walk to clear your mind."
+    },
+    {
+        keywords: ["sad", "depressed", "unhappy"],
+        response: "I'm sorry you're feeling this way. Talking to a friend or writing down your feelings might help."
+    },
+    {
+        keywords: ["tired", "exhausted", "sleep"],
+        response: "Make sure you're getting enough rest. A consistent sleep schedule can make a big difference."
+    },
+    {
+        keywords: ["happy", "joy", "excited"],
+        response: "I'm glad to hear you're feeling good! Keep doing what makes you happy!"
+    }
+];
+
+// Function to process user input
+function getBotResponse(input) {
+    input = input.toLowerCase();
+    for (let r of responses) {
+        for (let keyword of r.keywords) {
+            if (input.includes(keyword)) {
+                return r.response;
+            }
+        }
+    }
+    return "I see. Sometimes just talking helps. Is there anything else you'd like to share?";
+}
+
+// Function to add messages to the chat
+function addMessage(message, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add(sender === "bot" ? "chat-bot-message" : "chat-user-message");
+    messageDiv.textContent = message;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Send button click event
+sendButton.addEventListener("click", () => {
+    const userMessage = userInput.value.trim();
+    if (userMessage) {
+        addMessage(userMessage, "user");
+        if (userMessage.toLowerCase() === "exit") {
+            addMessage("Take care of yourself! Remember, you're not alone. Goodbye!", "bot");
+        } else {
+            const botResponse = getBotResponse(userMessage);
+            addMessage(botResponse, "bot");
+        }
+        userInput.value = "";
+    }
+});
+
+// Enter key to send message
+userInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        sendButton.click();
+    }
+});
